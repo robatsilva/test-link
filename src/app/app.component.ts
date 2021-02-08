@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import * as Highcharts from 'highcharts';
 @Component({
    selector: 'app-root',
@@ -6,6 +7,9 @@ import * as Highcharts from 'highcharts';
    styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  toppings = new FormControl();
+
+  toppingList: string[] = ['Extra cheese', 'Mushroom', 'Onion', 'Pepperoni', 'Sausage', 'Tomato'];
    highcharts = Highcharts;
    chartOptions = {
       chart: {
