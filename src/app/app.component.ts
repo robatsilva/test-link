@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import * as Highcharts from 'highcharts';
+import { BehaviorSubject } from 'rxjs';
 import { Link, DadosEstado } from './models/link.model';
 import { LinkService } from './services/link.service';
 @Component({
@@ -9,14 +10,14 @@ import { LinkService } from './services/link.service';
    templateUrl: './app.component.html',
    styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
   displayedColumns: string[] = ['trimestre', 'receita', 'despesa', 'lucro', 'status'];
   states = new FormControl(['Todos']);
   years = new FormControl(['Todos']);
 
   link: Link[];
 
-  dadosEstado: DadosEstado[] = [];
+  dadosEstado = new BehaviorSubject<DadosEstado[]>([]);
 
   yearList: string[] = [];
   statesList: string[] = [];
@@ -64,40 +65,70 @@ export class AppComponent implements OnInit{
    };
 
    constructor(private linkService: LinkService,
-    private snackBar: MatSnackBar){}
+    private snackBar: MatSnackBar) {}
 
-   ngOnInit(){
+   ngOnInit() {
     this.linkService.getInfo()
-      .subscribe((link: Link[])=>{
+      .subscribe((link: Link[]) => {
         this.link = link;
         this.setLists(link);
-      })
+      });
+
+    this.onStateChange();
    }
 
-   public onFilter(){
-     if(this.states.value.length === 1 && this.states.value[0] === 'Todos' &&
-        this.years.value.length === 1 && this.years.value[0] === 'Todos'){
-       this.snackBar.open('Selecione pelo menos um estado ou um ano', '', {
+   public onFilter() {
+     if (this.states.value.length === 1 && this.states.value[0] === 'Todos' &&
+          this.years.value.length === 1 && this.years.value[0] === 'Todos') {
+      this.snackBar.open('Selecione pelo menos um estado ou um ano', '', {
         duration: 2000,
       });
-     }
+      return;
+    }
+    this.dadosEstado.next([]);
 
-     this.link.forEach(l => {
-      l.dadosEstado.map(d => d)
-        .reduce((a, b, i, dados) => {
-          let dado = a;
-          if(a.trimestre === b.trimestre){
-            dado.totalDespesa = a.totalDespesa + b.totalDespesa;
-            dado.totalReceita = a.totalReceita + b.totalReceita;
-            dado.meta = (a.meta + b.meta) / 2;
-            this.dadosEstado = [...this.dadosEstado, ...[dado]];
-          }
-          return dado;
-        })
+     let filtered = this.link
+      .filter(linkData =>
+              this.states.value.some(state => state === linkData.nomeEstado || state === 'Todos'));
+
+
+    filtered = filtered
+    .filter(linkData =>
+            this.years.value.some(year => year === linkData.ano.toString() || year === 'Todos'));
+
+      filtered.forEach(linkData => {
+        linkData.dadosEstado
+          .forEach(dadoTrimestre => {
+            const trimestre = this.dadosEstado.value.find(dado => dado.trimestre === dadoTrimestre.trimestre );
+            if (trimestre) {
+              trimestre.totalDespesa += dadoTrimestre.totalDespesa;
+              trimestre.totalReceita += dadoTrimestre.totalReceita;
+              trimestre.meta = ((trimestre.meta + dadoTrimestre.meta) / 2);
+            } else {
+              this.dadosEstado.next([...this.dadosEstado.value, ...[ { ...dadoTrimestre }]]);
+            }
+          });
      });
    }
 
-   private setLists(link: Link[]){
+   public onStateChange() {
+     this.states.valueChanges.subscribe(() => {
+      if (this.states.value.length === 1 && this.states.value[0] === 'Todos') {
+        this.yearList = this.link.map(linkData => linkData.ano.toString())
+          .filter(onlyUnique)
+          .sort((a, b) => a >= b ? 1 : -1);
+      } else {
+        this.yearList = this.link
+          .filter(linkData => this.states.value.some(state => state === linkData.nomeEstado))
+          .map(linkData => linkData.ano.toString())
+          .filter(onlyUnique)
+          .sort((a, b) => a >= b ? 1 : -1);
+      }
+      this.yearList.unshift('Todos');
+      });
+   }
+
+   private setLists(link: Link[]) {
       this.yearList = link.map(linkData => linkData.ano.toString())
         .filter(onlyUnique)
         .sort((a, b) => a >= b ? 1 : -1);
@@ -110,6 +141,6 @@ export class AppComponent implements OnInit{
    }
 }
 
-export function onlyUnique(value, index, self){
+export function onlyUnique(value, index, self) {
   return self.indexOf(value) === index;
 }

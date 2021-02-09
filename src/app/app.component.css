@@ -7,3 +7,10 @@
 table {
   width: 100%;
 }
+
+.circle {
+  background: blue;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+}
