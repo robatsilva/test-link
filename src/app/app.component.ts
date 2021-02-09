@@ -1,15 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatSnackBar } from '@angular/material';
 import * as Highcharts from 'highcharts';
+import { Link, DadosEstado } from './models/link.model';
+import { LinkService } from './services/link.service';
 @Component({
    selector: 'app-root',
    templateUrl: './app.component.html',
    styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  toppings = new FormControl();
+export class AppComponent implements OnInit{
+  displayedColumns: string[] = ['trimestre', 'receita', 'despesa', 'lucro', 'status'];
+  states = new FormControl(['Todos']);
+  years = new FormControl(['Todos']);
 
-  toppingList: string[] = ['Extra cheese', 'Mushroom', 'Onion', 'Pepperoni', 'Sausage', 'Tomato'];
+  link: Link[];
+
+  dadosEstado: DadosEstado[];
+
+  yearList: string[] = [];
+  statesList: string[] = [];
    highcharts = Highcharts;
    chartOptions = {
       chart: {
@@ -52,4 +62,42 @@ export class AppComponent {
          }
       ]
    };
+
+   constructor(private linkService: LinkService,
+    private snackBar: MatSnackBar){}
+
+   ngOnInit(){
+    this.linkService.getInfo()
+      .subscribe((link: Link[])=>{
+        this.link = link;
+        this.setLists(link);
+      })
+   }
+
+   public onFilter(){
+     if(this.states.value.length === 1 && this.states.value[0] === 'Todos' &&
+        this.years.value.length === 1 && this.years.value[0] === 'Todos'){
+       this.snackBar.open('Selecione pelo menos um estado ou um ano', '', {
+        duration: 2000,
+      });
+     }
+
+    //  this.dadosEstado = this.link.map(l => l.dadosEstado);
+   }
+
+   private setLists(link: Link[]){
+      this.yearList = link.map(linkData => linkData.ano.toString())
+        .filter(onlyUnique)
+        .sort((a, b) => a >= b ? 1 : -1);
+      this.statesList = link.map(linkData => linkData.nomeEstado)
+        .filter(onlyUnique)
+        .sort((a, b) => a >= b ? 1 : -1);
+
+      this.yearList.unshift('Todos');
+      this.statesList.unshift('Todos');
+   }
+}
+
+export function onlyUnique(value, index, self){
+  return self.indexOf(value) === index;
 }

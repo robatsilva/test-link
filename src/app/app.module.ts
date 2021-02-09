@@ -5,6 +5,8 @@ import { HighchartsChartComponent } from 'highcharts-angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSelectModule} from '@angular/material/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { MatButton, MatButtonModule, MatSnackBarModule, MatTableModule } from '@angular/material';
 @NgModule({
    declarations: [
       AppComponent,
@@ -15,7 +17,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
       ReactiveFormsModule,
       BrowserModule,
       BrowserAnimationsModule,
-      MatSelectModule
+      MatSelectModule,
+      MatButtonModule,
+      MatTableModule,
+      MatSnackBarModule,
+      HttpClientModule
    ],
    providers: [],
    bootstrap: [AppComponent]
