@@ -109,6 +109,16 @@ export class AppComponent implements OnInit {
             }
           });
      });
+
+     this.chartOptions.xAxis.categories = this.link.map(l => l.ano.toString());
+     this.chartOptions.series = this.link.map(l => {
+       const serie = {
+         name: l.ano.toString(),
+         data: l.dadosEstado.map(dado => dado.totalDespesa - dado.totalReceita)
+       };
+       return serie;
+     });
+     this.chartOptions = {...this.chartOptions};
    }
 
    public onStateChange() {
