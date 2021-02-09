@@ -28,22 +28,22 @@
 
   <ng-container matColumnDef="receita">
     <th mat-header-cell *matHeaderCellDef> Receita </th>
-    <td mat-cell *matCellDef="let dadoEstado"> {{dadoEstado.receita}} </td>
+    <td mat-cell *matCellDef="let dadoEstado"> {{dadoEstado.totalReceita}} </td>
   </ng-container>
 
   <ng-container matColumnDef="despesa">
     <th mat-header-cell *matHeaderCellDef> Despesa </th>
-    <td mat-cell *matCellDef="let dadoEstado"> {{dadoEstado.despesa}} </td>
+    <td mat-cell *matCellDef="let dadoEstado"> {{dadoEstado.totalDespesa}} </td>
   </ng-container>
 
   <ng-container matColumnDef="lucro">
     <th mat-header-cell *matHeaderCellDef> Lucro </th>
-    <td mat-cell *matCellDef="let dadoEstado"> {{dadoEstado.lucro}} </td>
+    <td mat-cell *matCellDef="let dadoEstado"> {{dadoEstado.totalReceita - dadoEstado.totalDespesa}} </td>
   </ng-container>
 
   <ng-container matColumnDef="status">
     <th mat-header-cell *matHeaderCellDef> Status </th>
-    <td mat-cell *matCellDef="let dadoEstado"> {{dadoEstado.status}} </td>
+    <td mat-cell *matCellDef="let dadoEstado"> {{dadoEstado.meta}} </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

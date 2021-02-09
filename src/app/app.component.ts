@@ -16,7 +16,7 @@ export class AppComponent implements OnInit{
 
   link: Link[];
 
-  dadosEstado: DadosEstado[];
+  dadosEstado: DadosEstado[] = [];
 
   yearList: string[] = [];
   statesList: string[] = [];
@@ -82,7 +82,19 @@ export class AppComponent implements OnInit{
       });
      }
 
-    //  this.dadosEstado = this.link.map(l => l.dadosEstado);
+     this.link.forEach(l => {
+      l.dadosEstado.map(d => d)
+        .reduce((a, b, i, dados) => {
+          let dado = a;
+          if(a.trimestre === b.trimestre){
+            dado.totalDespesa = a.totalDespesa + b.totalDespesa;
+            dado.totalReceita = a.totalReceita + b.totalReceita;
+            dado.meta = (a.meta + b.meta) / 2;
+            this.dadosEstado = [...this.dadosEstado, ...[dado]];
+          }
+          return dado;
+        })
+     });
    }
 
    private setLists(link: Link[]){
