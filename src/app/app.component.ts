@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
       type: "spline",
     },
     title: {
-      text: "Lucro por trimestre",
+      text: "Evolução dos lucros",
     },
     xAxis: {
       categories: ["Trimestre 1", "Trimestre 2", "Trimestre 3", "Trimestre 4"],
@@ -65,14 +65,13 @@ export class AppComponent implements OnInit {
     },
     series: [],
   });
-
   highcharts3 = Highcharts;
   chartOptions3 = new BehaviorSubject<any>({
     chart: {
-      type: "spline",
+      type: "pie",
     },
     title: {
-      text: "Lucro por trimestre",
+      text: "Despesa X Trimestre",
     },
     xAxis: {
       categories: ["Trimestre 1", "Trimestre 2", "Trimestre 3", "Trimestre 4"],
@@ -84,25 +83,42 @@ export class AppComponent implements OnInit {
     },
     series: [],
   });
+
 
   highcharts4 = Highcharts;
   chartOptions4 = new BehaviorSubject<any>({
     chart: {
-      type: "spline",
+        type: 'column'
     },
     title: {
-      text: "Lucro por trimestre",
+        text: 'Resultado'
     },
     xAxis: {
-      categories: ["Trimestre 1", "Trimestre 2", "Trimestre 3", "Trimestre 4"],
+        categories: [],
+        crosshair: true
     },
     yAxis: {
-      title: {
-        text: "Lucro",
-      },
+        min: 0,
+        title: {
+            text: 'Resultado'
+        }
     },
-    series: [],
-  });
+    tooltip: {
+        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y:.1f} %</b></td></tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+    },
+    plotOptions: {
+        column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+        }
+    },
+    series: []
+});
 
   constructor(
     private linkService: LinkService,
@@ -146,6 +162,13 @@ export class AppComponent implements OnInit {
     const chartOptionsaux2 = this.chartOptions2.value;
     chartOptionsaux2.series = [];
     this.chartOptions2.next(undefined);
+    const chartOptionsaux3 = this.chartOptions3.value;
+    chartOptionsaux3.series = [];
+    this.chartOptions3.next(undefined);
+    const chartOptionsaux4 = this.chartOptions4.value;
+    chartOptionsaux4.series = [];
+    chartOptionsaux4.xAxis.categories = [];
+    this.chartOptions4.next(undefined);
     let filtered = this.link.filter((linkData) =>
       this.states.value.some(
         (state) => state === linkData.nomeEstado || state === "Todos"
@@ -168,7 +191,6 @@ export class AppComponent implements OnInit {
             name: linkData.nomeEstado,
             data: [],
           };
-          chartOptionsaux.series.push(serie);
         }
         if (serie.data[dadoTrimestre.trimestre - 1]) {
           serie.data[dadoTrimestre.trimestre - 1] +=
@@ -178,6 +200,22 @@ export class AppComponent implements OnInit {
             dadoTrimestre.totalReceita - dadoTrimestre.totalDespesa
           );
         }
+
+
+        let serie4 = chartOptionsaux4.series.find(
+          (serie) => serie.name === `Ano ${linkData.ano} Trimestre ${dadoTrimestre.trimestre}`
+        );
+        if (!serie4) {
+          serie4 = {
+            name: `Ano ${linkData.ano} Trimestre ${dadoTrimestre.trimestre}`,
+            data: [dadoTrimestre.meta],
+          };
+          chartOptionsaux4.series.push(serie4);
+          chartOptionsaux4.xAxis.categories.push(`Ano ${linkData.ano} Trimestre ${dadoTrimestre.trimestre}`);
+        } else {
+          serie4.data[0] = ((serie4.data[0] + dadoTrimestre.meta) / 2);
+        }
+
 
         const trimestre = this.dadosEstado.value.find(
           (dado) => dado.trimestre === dadoTrimestre.trimestre
@@ -194,20 +232,33 @@ export class AppComponent implements OnInit {
         }
 
       });
-      chartOptionsaux2.series.push({
-        name: 'Receita',
-        data: this.dadosEstado.value.map(dado => {
-          return {
-              name: 'Trimestre ' + dado.trimestre,
-              y: dado.totalReceita
-          }
-        })
-      });
 
     });
+    chartOptionsaux2.series.push({
+      name: 'Receita',
+      data: this.dadosEstado.value.map(dado => {
+        return {
+            name: 'Trimestre ' + dado.trimestre,
+            y: dado.totalReceita
+        }
+      })
+    });
+
+    chartOptionsaux3.series.push({
+      name: 'Despesa',
+      data: this.dadosEstado.value.map(dado => {
+        return {
+            name: 'Trimestre ' + dado.trimestre,
+            y: dado.totalDespesa
+        }
+      })
+    });
+
     setTimeout(() => {
       this.chartOptions.next({ ...chartOptionsaux });
       this.chartOptions2.next({...chartOptionsaux2});
+      this.chartOptions3.next({...chartOptionsaux3});
+      this.chartOptions4.next({...chartOptionsaux4});
     }, 0);
   }
 
@@ -251,6 +302,9 @@ export class AppComponent implements OnInit {
 
     this.yearList.unshift("Todos");
     this.statesList.unshift("Todos");
+  }
+  private buildChart2(){
+
   }
 }
 

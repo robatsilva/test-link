@@ -19,7 +19,7 @@
 
 </div>
 
-<table *ngIf="dadosEstado | async" mat-table [dataSource]="dadosEstado | async" class="mat-elevation-z8">
+<table *ngIf="(dadosEstado | async).length" mat-table [dataSource]="dadosEstado | async" class="mat-elevation-z8">
 
   <ng-container matColumnDef="trimestre">
     <th mat-header-cell *matHeaderCellDef> </th>
@@ -63,16 +63,18 @@
    [options] = "chartOptions | async"
    style = "width: 100%; height: 400px; display: block;">
 </highcharts-chart>
-<highcharts-chart *ngIf="(chartOptions2 | async)?.series?.length"
-   [Highcharts] = "highcharts2"
-   [options] = "chartOptions2 | async"
-   style = "width: 100%; height: 400px; display: block;">
-</highcharts-chart>
-<highcharts-chart *ngIf="(chartOptions3 | async)?.series?.length"
-   [Highcharts] = "highcharts3"
-   [options] = "chartOptions3 | async"
-   style = "width: 100%; height: 400px; display: block;">
-</highcharts-chart>
+<div>
+  <highcharts-chart *ngIf="(chartOptions2 | async)?.series?.length"
+     [Highcharts] = "highcharts2"
+     [options] = "chartOptions2 | async"
+     style = "width: 50%; height: 400px; display: block; float: left">
+  </highcharts-chart>
+  <highcharts-chart *ngIf="(chartOptions3 | async)?.series?.length"
+     [Highcharts] = "highcharts3"
+     [options] = "chartOptions3 | async"
+     style = "width: 50%; height: 400px; display: block; float: right">
+  </highcharts-chart>
+</div>
 <highcharts-chart *ngIf="(chartOptions4 | async)?.series?.length"
    [Highcharts] = "highcharts4"
    [options] = "chartOptions4 | async"
