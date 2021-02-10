@@ -19,11 +19,11 @@
 
 </div>
 
-<table mat-table [dataSource]="dadosEstado | async" class="mat-elevation-z8">
+<table *ngIf="dadosEstado | async" mat-table [dataSource]="dadosEstado | async" class="mat-elevation-z8">
 
   <ng-container matColumnDef="trimestre">
     <th mat-header-cell *matHeaderCellDef> </th>
-    <td mat-cell *matCellDef="let dadoEstado"> {{dadoEstado.trimestre}} </td>
+    <td mat-cell *matCellDef="let dadoEstado"> Trimestre {{dadoEstado.trimestre}} </td>
   </ng-container>
 
   <ng-container matColumnDef="receita">
@@ -38,24 +38,43 @@
 
   <ng-container matColumnDef="lucro">
     <th mat-header-cell *matHeaderCellDef> Lucro </th>
-    <td mat-cell *matCellDef="let dadoEstado"> {{dadoEstado.totalReceita - dadoEstado.totalDespesa}} </td>
+    <td mat-cell *matCellDef="let dadoEstado"
+      [class.negative]="dadoEstado.totalReceita - dadoEstado.totalDespesa < 0">
+        {{dadoEstado.totalReceita - dadoEstado.totalDespesa}}
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="status">
     <th mat-header-cell *matHeaderCellDef> Status </th>
-    <td mat-cell *matCellDef="let dadoEstado"> <div class="circle"></div> {{dadoEstado.meta | number : '1.1-2'}} </td>
+    <td mat-cell *matCellDef="let dadoEstado">
+      <div class="circle"
+        [class.circle-green]="dadoEstado.meta > 0.8"
+        [class.circle-yellow]="dadoEstado.meta <= 0.8 && dadoEstado.meta >= 0.5"
+        [class.circle-red]="dadoEstado.meta < 0.5"></div>
+    </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
 
-<highcharts-chart
+<highcharts-chart *ngIf="(chartOptions | async)?.series?.length"
    [Highcharts] = "highcharts"
-   [options] = "chartOptions"
+   [options] = "chartOptions | async"
    style = "width: 100%; height: 400px; display: block;">
 </highcharts-chart>
-<pre>
-  {{chartOptions | json}}
-</pre>
-
+<highcharts-chart *ngIf="(chartOptions2 | async)?.series?.length"
+   [Highcharts] = "highcharts2"
+   [options] = "chartOptions2 | async"
+   style = "width: 100%; height: 400px; display: block;">
+</highcharts-chart>
+<highcharts-chart *ngIf="(chartOptions3 | async)?.series?.length"
+   [Highcharts] = "highcharts3"
+   [options] = "chartOptions3 | async"
+   style = "width: 100%; height: 400px; display: block;">
+</highcharts-chart>
+<highcharts-chart *ngIf="(chartOptions4 | async)?.series?.length"
+   [Highcharts] = "highcharts4"
+   [options] = "chartOptions4 | async"
+   style = "width: 100%; height: 400px; display: block;">
+</highcharts-chart>
