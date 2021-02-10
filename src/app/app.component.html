@@ -1,82 +1,18 @@
-<div class="filter">
-  <mat-form-field appearance="fill">
-    <mat-label>Estados</mat-label>
-    <mat-select [formControl]="states" multiple>
-      <mat-option *ngFor="let state of statesList" [value]="state">{{state}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field appearance="fill">
-    <mat-label>Ano</mat-label>
-    <mat-select [formControl]="years" multiple>
-      <mat-option *ngFor="let year of yearList" [value]="year">{{year}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <div>
-    <button mat-raised-button (click)="onFilter()">Filtrar</button>
-  </div>
-</div>
-<div>
+<app-filter
+  [states]="states"
+  [statesList]="statesList | async"
+  [years]="years"
+  [yearList]="yearList | async"
+  (onFilter)="onFilter()"
+>
+</app-filter>
 
-</div>
+<app-table [dadosEstado]="dadosEstado | async"></app-table>
 
-<table *ngIf="(dadosEstado | async).length" mat-table [dataSource]="dadosEstado | async" class="mat-elevation-z8">
-
-  <ng-container matColumnDef="trimestre">
-    <th mat-header-cell *matHeaderCellDef> </th>
-    <td mat-cell *matCellDef="let dadoEstado"> Trimestre {{dadoEstado.trimestre}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="receita">
-    <th mat-header-cell *matHeaderCellDef> Receita </th>
-    <td mat-cell *matCellDef="let dadoEstado"> {{dadoEstado.totalReceita}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="despesa">
-    <th mat-header-cell *matHeaderCellDef> Despesa </th>
-    <td mat-cell *matCellDef="let dadoEstado"> {{dadoEstado.totalDespesa}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="lucro">
-    <th mat-header-cell *matHeaderCellDef> Lucro </th>
-    <td mat-cell *matCellDef="let dadoEstado"
-      [class.negative]="dadoEstado.totalReceita - dadoEstado.totalDespesa < 0">
-        {{dadoEstado.totalReceita - dadoEstado.totalDespesa}}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="status">
-    <th mat-header-cell *matHeaderCellDef> Status </th>
-    <td mat-cell *matCellDef="let dadoEstado">
-      <div class="circle"
-        [class.circle-green]="dadoEstado.meta > 0.8"
-        [class.circle-yellow]="dadoEstado.meta <= 0.8 && dadoEstado.meta >= 0.5"
-        [class.circle-red]="dadoEstado.meta < 0.5"></div>
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
-
-<highcharts-chart *ngIf="(chartOptions | async)?.series?.length"
-   [Highcharts] = "highcharts"
-   [options] = "chartOptions | async"
-   style = "width: 100%; height: 400px; display: block;">
-</highcharts-chart>
-<div>
-  <highcharts-chart *ngIf="(chartOptions2 | async)?.series?.length"
-     [Highcharts] = "highcharts2"
-     [options] = "chartOptions2 | async"
-     style = "width: 50%; height: 400px; display: block; float: left">
-  </highcharts-chart>
-  <highcharts-chart *ngIf="(chartOptions3 | async)?.series?.length"
-     [Highcharts] = "highcharts3"
-     [options] = "chartOptions3 | async"
-     style = "width: 50%; height: 400px; display: block; float: right">
-  </highcharts-chart>
-</div>
-<highcharts-chart *ngIf="(chartOptions4 | async)?.series?.length"
-   [Highcharts] = "highcharts4"
-   [options] = "chartOptions4 | async"
-   style = "width: 100%; height: 400px; display: block;">
-</highcharts-chart>
+<app-charts
+  [chartOptions]="chartOptions | async"
+  [chartOptions2]="chartOptions2 | async"
+  [chartOptions3]="chartOptions3 | async"
+  [chartOptions4]="chartOptions4 | async"
+>
+</app-charts>

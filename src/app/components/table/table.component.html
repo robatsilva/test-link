@@ -1,0 +1,49 @@
+<table
+  *ngIf="dadosEstado.length"
+  mat-table
+  [dataSource]="dadosEstado"
+  class="mat-elevation-z8"
+>
+  <ng-container matColumnDef="trimestre">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let dadoEstado">
+      Trimestre {{ dadoEstado.trimestre }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="receita">
+    <th mat-header-cell *matHeaderCellDef>Receita</th>
+    <td mat-cell *matCellDef="let dadoEstado">{{ dadoEstado.totalReceita }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="despesa">
+    <th mat-header-cell *matHeaderCellDef>Despesa</th>
+    <td mat-cell *matCellDef="let dadoEstado">{{ dadoEstado.totalDespesa }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="lucro">
+    <th mat-header-cell *matHeaderCellDef>Lucro</th>
+    <td
+      mat-cell
+      *matCellDef="let dadoEstado"
+      [class.negative]="dadoEstado.totalReceita - dadoEstado.totalDespesa < 0"
+    >
+      {{ dadoEstado.totalReceita - dadoEstado.totalDespesa }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef>Status</th>
+    <td mat-cell *matCellDef="let dadoEstado">
+      <div
+        class="circle"
+        [class.circle-green]="dadoEstado.meta > 0.8"
+        [class.circle-yellow]="dadoEstado.meta <= 0.8 && dadoEstado.meta >= 0.5"
+        [class.circle-red]="dadoEstado.meta < 0.5"
+      ></div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

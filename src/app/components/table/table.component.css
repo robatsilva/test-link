@@ -1,0 +1,21 @@
+table {
+  width: 100%;
+}
+.circle {
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+}
+.circle-green {
+  background: green;
+}
+.circle-yellow {
+  background: yellow;
+}
+.circle-red {
+  background: red;
+}
+
+.negative{
+  color: red;
+}

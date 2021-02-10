@@ -1,0 +1,21 @@
+<div class="filter">
+  <mat-form-field appearance="fill">
+    <mat-label>Estados</mat-label>
+    <mat-select [formControl]="states" multiple>
+      <mat-option *ngFor="let state of statesList" [value]="state">{{
+        state
+      }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Ano</mat-label>
+    <mat-select [formControl]="years" multiple>
+      <mat-option *ngFor="let year of yearList" [value]="year">{{
+        year
+      }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div>
+    <button mat-raised-button (click)="onFilter.emit()">Filtrar</button>
+  </div>
+</div>

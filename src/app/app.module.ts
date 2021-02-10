@@ -1,3 +1,4 @@
+import { ChartsComponent } from './components/charts/charts.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
@@ -7,10 +8,15 @@ import {MatSelectModule} from '@angular/material/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MatButton, MatButtonModule, MatSnackBarModule, MatTableModule } from '@angular/material';
+import { TableComponent } from './components/table/table.component';
+import { FilterComponent } from './components/filter/filter.component';
 @NgModule({
    declarations: [
       AppComponent,
-      HighchartsChartComponent
+      HighchartsChartComponent,
+      TableComponent,
+      FilterComponent,
+      ChartsComponent
    ],
    imports: [
       FormsModule,

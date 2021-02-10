@@ -1,0 +1,31 @@
+
+<highcharts-chart
+*ngIf="(chartOptions)?.series?.length"
+[Highcharts]="highcharts"
+[options]="chartOptions"
+style="width: 100%; height: 400px; display: block"
+>
+</highcharts-chart>
+<div>
+<highcharts-chart
+  *ngIf="(chartOptions2)?.series?.length"
+  [Highcharts]="highcharts2"
+  [options]="chartOptions2"
+  style="width: 50%; height: 400px; display: block; float: left"
+>
+</highcharts-chart>
+<highcharts-chart
+  *ngIf="(chartOptions3)?.series?.length"
+  [Highcharts]="highcharts3"
+  [options]="chartOptions3"
+  style="width: 50%; height: 400px; display: block; float: right"
+>
+</highcharts-chart>
+</div>
+<highcharts-chart
+*ngIf="(chartOptions4)?.series?.length"
+[Highcharts]="highcharts4"
+[options]="chartOptions4"
+style="width: 100%; height: 400px; display: block"
+>
+</highcharts-chart>
