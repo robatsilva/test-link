@@ -14,7 +14,6 @@ import { LinkService } from './services/link.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
-
   states = new FormControl(['Todos']);
   years = new FormControl(['Todos']);
 
@@ -146,8 +145,14 @@ export class AppComponent implements OnInit {
     this.dadosEstado.next([]);
 
     const chart1 = this.resetChart(this.chartOptions);
+
+    if (this.years.value.some((val) => val === 'Todos')) {
+      this.chartOptions2.value.xAxis.categories = [];
+      this.chartOptions3.value.xAxis.categories = [];
+    }
     const chart2 = this.resetChart(this.chartOptions2);
     const chart3 = this.resetChart(this.chartOptions3);
+
     this.chartOptions4.value.xAxis.categories = [];
     const chart4 = this.resetChart(this.chartOptions4);
 
@@ -168,10 +173,28 @@ export class AppComponent implements OnInit {
         this.buildTable(dadoTrimestre);
         this.buildChart1(chart1, linkData, dadoTrimestre);
         this.buildChart4(chart4, linkData, dadoTrimestre);
+        if (this.years.value.some((val) => val === 'Todos')) {
+          this.buildChartPieYear(
+            chart2,
+            linkData,
+            dadoTrimestre,
+            'totalReceita',
+            'Receita'
+          );
+          this.buildChartPieYear(
+            chart3,
+            linkData,
+            dadoTrimestre,
+            'totalDespesa',
+            'Despesa'
+          );
+        }
       });
     });
-    this.buildChart2(chart2);
-    this.buildChart3(chart3);
+    if (!this.years.value.some((val) => val === 'Todos')) {
+      this.buildChartPie(chart2, 'Receita', 'totalReceita');
+      this.buildChartPie(chart3, 'Despesa', 'totalDespesa');
+    }
     setTimeout(() => {
       this.chartOptions.next({ ...chart1 });
       this.chartOptions2.next({ ...chart2 });
@@ -294,13 +317,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private buildChart2(chartOptionsaux) {
-    this.buildChartPie(chartOptionsaux, 'Receita', 'totalReceita');
-  }
-  private buildChart3(chartOptionsaux) {
-    this.buildChartPie(chartOptionsaux, 'Despesa', 'totalDespesa');
-  }
-
   private buildChart4(
     chartOptionsaux,
     linkData: Link,
@@ -325,7 +341,41 @@ export class AppComponent implements OnInit {
     }
   }
 
+  private buildChartPieYear(
+    chartOptionsaux,
+    linkData: Link,
+    dadoTrimestre: DadosEstado,
+    field: string,
+    fieldName: string
+  ) {
+    let serieYear = chartOptionsaux.series.find(
+      (serie) => serie.name === fieldName
+    );
+
+    if (!serieYear) {
+      serieYear = {
+        name: fieldName,
+        data: [],
+      };
+      chartOptionsaux.series.push(serieYear);
+      chartOptionsaux.xAxis.categories.push(
+        `Ano ${linkData.ano} Trimestre ${dadoTrimestre.trimestre}`
+      );
+    }
+    if (serieYear.data[dadoTrimestre.trimestre - 1]) {
+      serieYear.data[dadoTrimestre.trimestre - 1].y += dadoTrimestre[field];
+    } else {
+      serieYear.data.push({
+        name: 'Trimestre ' + dadoTrimestre.trimestre,
+        y: dadoTrimestre[field],
+      });
+    }
+  }
+
   private buildChartPie(chartOptionsaux, name: string, field: string) {
+    if (this.states.value.some((state) => state === 'Todos')) {
+      return;
+    }
     chartOptionsaux.series.push({
       name: name,
       data: this.dadosEstado.value.map((dado) => {
